@@ -38,6 +38,7 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.0.1'
     testCompile 'junit:junit:4.12'
     compile 'com.jakewharton:butterknife:8.5.1'
+    compile 'com.klinkerapps:link_builder:1.5.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile('com.twitter.sdk.android:twitter:2.3.2@aar') {
         transitive = true;
