@@ -1,15 +1,25 @@
 package com.kushyk.twittertest.ui.tweet;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.klinker.android.link_builder.Link;
 import com.klinker.android.link_builder.LinkBuilder;
 import com.klinker.android.link_builder.TouchableMovementMethod;
@@ -47,8 +57,25 @@ public class TweetTimeLineAdapter extends RecyclerView.Adapter<TweetTimeLineAdap
 
     @Override
     public void onBindViewHolder(TweetViewHolder holder, int position) {
-        CharSequence text = LinkedTextUtil.getLinkedText(holder.tweetView.getContext(), tweets.get(position).text, link);
+        final Tweet tweet = tweets.get(position);
+        CharSequence text = LinkedTextUtil.getLinkedText(holder.tweetView.getContext(), tweet.text, link);
+        if (text == null) {
+            text = tweet.text;
+        }
         holder.tweetView.setText(text);
+        Glide.with(holder.userImageView.getContext())
+                .load(tweet.user.profileImageUrl)
+                .asBitmap()
+                .centerCrop()
+                .into(new BitmapImageViewTarget(holder.userImageView){
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getView().getContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        getView().setImageDrawable(circularBitmapDrawable);
+                    }
+                });
     }
 
     @Override
@@ -67,25 +94,37 @@ public class TweetTimeLineAdapter extends RecyclerView.Adapter<TweetTimeLineAdap
         this.tweetClickListener = tweetClickListener;
     }
 
-    class TweetViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tweetView)
-        TextView tweetView;
-
-        public TweetViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            tweetView.setMovementMethod(TouchableMovementMethod.getInstance());
-        }
-    }
-
     public List<Tweet> getTweets() {
         return tweets;
+    }
+
+    @Nullable
+    public Tweet getLastItem() {
+        return tweets.isEmpty() ? null : tweets.get(tweets.size() - 1);
     }
 
     public void setTweets(@NonNull List<Tweet> tweets) {
         this.tweets.clear();
         this.tweets.addAll(tweets);
         notifyDataSetChanged();
+    }
+
+    public void addTweets(@NonNull List<Tweet> tweets) {
+        this.tweets.addAll(tweets);
+        notifyDataSetChanged();
+    }
+
+    class TweetViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.tweetView)
+        TextView tweetView;
+        @BindView(R.id.userImageView)
+        ImageView userImageView;
+        public TweetViewHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+            tweetView.setMovementMethod(TouchableMovementMethod.getInstance());
+        }
+
     }
 
     public interface TweetClickListener{

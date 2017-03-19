@@ -8,8 +8,6 @@ import com.twitter.sdk.android.core.services.StatusesService;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -22,9 +20,9 @@ public class TweetManager {
     TwitterApiClient twitterApiClient = TwitterCore.getInstance().getApiClient();
     StatusesService statusesService = twitterApiClient.getStatusesService();
 
-    public Observable<List<Tweet>> getTimeLie(String screenName) {
+    public Observable<List<Tweet>> getTimeLie(String screenName, Long maxId) {
         return Observable.create(tweetSubscribe -> {
-            Call<List<Tweet>> call = statusesService.userTimeline(null, screenName, null, null, null, null, null, null, null);
+            Call<List<Tweet>> call = statusesService.userTimeline(null, screenName, null, null, maxId, null, null, null, false);
             call.enqueue(new Callback<List<Tweet>>() {
                 @Override
                 public void onResponse(Call<List<Tweet>> call, Response<List<Tweet>> response) {
