@@ -7,8 +7,7 @@ import com.kushyk.twittertest.R;
 import com.kushyk.twittertest.ui.tweet.TimeLineFragment;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String FIRST_SCREEN_NAME = "qwerty";
+    private static final String FIRST_SCREEN_NAME = "qwerty";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

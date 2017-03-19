@@ -1,5 +1,7 @@
 package com.kushyk.twittertest.ui.tweet;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,15 +12,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.kushyk.twittertest.App;
 import com.kushyk.twittertest.R;
+import com.twitter.sdk.android.Twitter;
+import com.twitter.sdk.android.core.TwitterSession;
 import com.twitter.sdk.android.core.models.Tweet;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -30,7 +36,8 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class TimeLineFragment extends Fragment {
-    public static final String LOG_TAG = TimeLineFragment.class.getSimpleName();
+    private static final String LOG_TAG = TimeLineFragment.class.getSimpleName();
+    private static final int REQUEST_CODE = 11;
     public static final String SCREEN_NAME = "screenName";
 
     @BindView(R.id.recyclerView)
@@ -38,7 +45,7 @@ public class TimeLineFragment extends Fragment {
     @BindView(R.id.actionButton)
     FloatingActionButton actionButton;
 
-    CompositeDisposable disposable = new CompositeDisposable();
+    private final CompositeDisposable disposable = new CompositeDisposable();
     private TweetTimeLineAdapter adapter;
     private boolean isLoading;
     private Unbinder unbinder;
@@ -84,6 +91,20 @@ public class TimeLineFragment extends Fragment {
         startActivity(TimeLineActivity.init(getActivity(), screenName));
     }
 
+    @OnClick(R.id.actionButton)
+    void writeTweet() {
+        TwitterSession session = Twitter.getSessionManager().getActiveSession();
+        if (session == null) {
+            startActivityForResult(TwitterLoginActivity.init(getActivity()), REQUEST_CODE);
+        } else {
+            startCreateTweetActivity(session);
+        }
+    }
+
+    private void startCreateTweetActivity(TwitterSession session) {
+        startActivity(App.getTweetManager().createTweetIntent(getActivity(),session));
+    }
+
     private void getUserTimeline(Long maxId) {
         isLoading = true;
         disposable.add(App.getTweetManager().getTimeLie(getArguments().getString(SCREEN_NAME), maxId)
@@ -103,6 +124,18 @@ public class TimeLineFragment extends Fragment {
 
     private void onErrorGetUserTimeline(Throwable throwable) {
         Log.e(LOG_TAG, "onErrorGetUserTimeline()", throwable);
+        Toast.makeText(getActivity(), R.string.erro_get_data, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CODE) {
+                writeTweet();
+            }
+        }
+
     }
 
     @Override

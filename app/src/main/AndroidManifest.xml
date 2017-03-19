@@ -27,6 +27,10 @@
         <activity
             android:name=".ui.tweet.TimeLineActivity"
             android:label="@string/title_activity_time_line"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.tweet.TwitterLoginActivity"
+            android:label="@string/title_activity_twitter_register"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

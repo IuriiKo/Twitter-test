@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  */
 
 public class PatternUtil {
-    public static final String TWEETER_SCREEN_NAME = "@\\w{1,15}";
+    private static final String TWEETER_SCREEN_NAME = "@\\w{1,15}";
     public static final Pattern TWEETER_SCREEN_NAME_PATTERN = pattern(TWEETER_SCREEN_NAME);
 
     private static Pattern pattern(String pattern) {

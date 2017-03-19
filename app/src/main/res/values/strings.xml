@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Twitter test</string>
     <string name="title_activity_time_line">TimeLineActivity</string>
+    <string name="title_activity_twitter_register">TwitterRegisterActivity</string>
+    <string name="erro_get_data">Неможливо одержати данні з сервера</string>
+    <string name="erro_twitter_signin">Помилка реєстрації</string>
+    <string name="tools_long_text">Some text Some text Some text Some text Some text Some text Some text Some text Some text Some text Some text Some text Some text</string>
 </resources>
